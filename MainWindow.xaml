@@ -1,0 +1,267 @@
+﻿<Window x:Class="CanIRunIt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Can I Run It?" 
+        Height="850" Width="1200"
+        MinHeight="700" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="White"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- Palette (Clean & Professional) -->
+        <SolidColorBrush x:Key="TextDark" Color="#1E293B"/>   <!-- Slate 800 -->
+        <SolidColorBrush x:Key="TextLight" Color="#64748B"/>  <!-- Slate 500 -->
+        <SolidColorBrush x:Key="Accent" Color="#4F46E5"/>     <!-- Indigo 600 -->
+        <SolidColorBrush x:Key="AccentBg" Color="#EEF2FF"/>   <!-- Indigo 50 -->
+        <SolidColorBrush x:Key="Background" Color="#F8FAFC"/> <!-- Slate 50 -->
+        
+        <!-- Styles -->
+        <Style x:Key="ListItem" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0,0,10,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="border" CornerRadius="8" Padding="12,10" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" Cursor="Hand">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Text="{Binding StatusEmoji}" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Software.Name}" FontWeight="SemiBold" FontSize="14" Foreground="{StaticResource TextDark}"/>
+                                </StackPanel>
+                                
+                                <TextBlock Grid.Column="2" Text="{Binding CompatibilityScore, StringFormat={}{0}%}" 
+                                           FontSize="12" FontWeight="Bold" Foreground="{Binding StatusColorText}" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F1F5F9"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F1F5F9"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DetailCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="25"/>
+             <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.04" Color="Black" Direction="270"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource Background}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Header -->
+            <RowDefinition Height="Auto"/> <!-- Search & Filters -->
+            <RowDefinition Height="*"/>    <!-- Content -->
+        </Grid.RowDefinitions>
+
+        <!-- 1. Header Area with System Specs -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="30,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Logo -->
+                <StackPanel Orientation="Horizontal">
+                    <Border Background="{StaticResource Accent}" CornerRadius="8" Width="36" Height="36" Margin="0,0,12,0">
+                        <TextBlock Text="🚀" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Can I Run It?" FontWeight="Bold" FontSize="18" Foreground="{StaticResource TextDark}"/>
+                        <TextBlock Text="System Ready" FontSize="12" Foreground="#10B981" FontWeight="Medium"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- System Specs Summary (Compact) -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#F8FAFC" CornerRadius="8" Padding="12,8" Margin="8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🧠" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="SidebarCpu" Text="Core i5..." FontSize="12" Foreground="{StaticResource TextDark}" TextTrimming="CharacterEllipsis" MaxWidth="150" ToolTip="CPU"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#F8FAFC" CornerRadius="8" Padding="12,8" Margin="8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🎮" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="SidebarGpu" Text="RTX 3060..." FontSize="12" Foreground="{StaticResource TextDark}" TextTrimming="CharacterEllipsis" MaxWidth="150" ToolTip="GPU"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#F8FAFC" CornerRadius="8" Padding="12,8" Margin="8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="💾" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="SidebarRam" Text="16 GB" FontSize="12" Foreground="{StaticResource TextDark}" ToolTip="RAM"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Click="RefreshButton_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Refresh Specs" Margin="5,0,0,0">
+                        <TextBlock Text="🔄" FontSize="14" Foreground="{StaticResource TextLight}"/>
+                         <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 2. Search & Filter Bar -->
+        <Grid Grid.Row="1" Margin="30,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Search -->
+            <Border Background="White" CornerRadius="8" BorderBrush="#E2E8F0" BorderThickness="1" Height="45">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="🔍" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource TextLight}"/>
+                    <TextBox x:Name="SearchBox" Grid.Column="1" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" FontSize="14"
+                             TextChanged="SearchBox_TextChanged"/>
+                    <TextBlock x:Name="SearchPlaceholder" Grid.Column="1" Text="Type software name..." IsHitTestVisible="False" VerticalAlignment="Center" Foreground="#CBD5E1" Margin="2,0,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- Filter -->
+            <ComboBox x:Name="CategoryFilter" Grid.Column="1" Margin="15,0,0,0" Width="180" Height="45" Background="White" BorderBrush="#E2E8F0"
+                      SelectionChanged="CategoryFilter_SelectionChanged" Padding="10,0"/>
+        </Grid>
+
+        <!-- 3. Main Content Split -->
+        <Grid Grid.Row="2" Margin="30,0,30,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.2*"/> <!-- List -->
+                <ColumnDefinition Width="2*"/>   <!-- Detail -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Selection List -->
+            <Grid Grid.Column="0" Margin="0,0,20,0">
+                <TextBlock Text="AVAILABLE SOFTWARE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextLight}" Margin="0,0,0,10" VerticalAlignment="Top"/>
+                <ListBox x:Name="SoftwareList" Margin="0,25,0,0"
+                         Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemContainerStyle="{StaticResource ListItem}"
+                         SelectionChanged="SoftwareList_SelectionChanged"
+                         Padding="2"/>
+            </Grid>
+
+            <!-- Right: Details Pane -->
+            <Border Grid.Column="1" Style="{StaticResource DetailCard}">
+                <Grid>
+                    <!-- Empty State -->
+                    <StackPanel x:Name="EmptyState" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="👈" FontSize="40" HorizontalAlignment="Center" Foreground="#CBD5E1" Margin="0,0,0,10"/>
+                        <TextBlock Text="Select an item" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextDark}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="from the list to analyze compatibility" FontSize="14" Foreground="{StaticResource TextLight}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Active Content -->
+                    <Grid x:Name="DetailsView" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Detail Header -->
+                        <Grid Grid.Row="0" Margin="0,0,0,30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="DetCat" Text="CATEGORY" FontSize="11" FontWeight="Bold" Foreground="{StaticResource Accent}" Margin="0,0,0,5"/>
+                                <TextBlock x:Name="DetName" Text="Software Title" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextDark}"/>
+                            </StackPanel>
+                            <!-- Score -->
+                            <Border Grid.Column="1" x:Name="DetScoreBadge" Background="{StaticResource AccentBg}" CornerRadius="12" Padding="20,5" VerticalAlignment="Top">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="Match" FontSize="10" Foreground="{StaticResource Accent}" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="DetScore" Text="95%" FontSize="24" FontWeight="Bold" Foreground="{StaticResource Accent}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Main Status -->
+                        <Border Grid.Row="1" x:Name="DetStatusBox" Background="#F0FDF4" CornerRadius="12" BorderBrush="#DCFCE7" BorderThickness="1" Padding="20" Margin="0,0,0,30">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="DetStatusIcon" Text="✅" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="COMPATIBILITY VERDICT" FontSize="10" FontWeight="Bold" Foreground="#166534" Margin="0,0,0,4"/>
+                                    <TextBlock x:Name="DetStatusText" Text="Fully Compatible" FontSize="16" FontWeight="SemiBold" Foreground="#14532D"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Components Breakdown -->
+                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <TextBlock Text="HARDWARE ANALYSIS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextLight}" Margin="0,0,0,15"/>
+                                <StackPanel x:Name="ComponentsList"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Utility Overlays -->
+         <Grid x:Name="LoadingOverlay" Grid.RowSpan="3" Background="#80FFFFFF" Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                 <Border Style="{StaticResource DetailCard}" Background="White">
+                     <StackPanel>
+                        <ProgressBar IsIndeterminate="True" Width="100" Height="4" BorderThickness="0" Background="#EEF2FF" Foreground="{StaticResource Accent}"/>
+                        <TextBlock Text="Analyzing System..." FontSize="13" Foreground="{StaticResource TextLight}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                     </StackPanel>
+                 </Border>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="ErrorOverlay" Grid.RowSpan="3" Background="White" Visibility="Collapsed">
+             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="🔍" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                <TextBlock Text="Database Not Found" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextDark}" HorizontalAlignment="Center"/>
+                <TextBlock Text="Please place 'db.json' next to the application." FontSize="14" Foreground="{StaticResource TextLight}" Margin="0,10,0,20"/>
+                <Button Content="Retry Check" Click="RetryDb_Click" Padding="25,10" Background="{StaticResource Accent}" Foreground="White" BorderThickness="0" Cursor="Hand">
+                     <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
