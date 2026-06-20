@@ -89,15 +89,6 @@ Build → Run
 
 ---
 
-## 📸 Preview
-
-> Add screenshots here later
-
-```md
-![App Screenshot](assets/screenshot.png)
-```
-
----
 
 ## 🤝 Contributing
 
